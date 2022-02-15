@@ -24,54 +24,107 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int counter = 0;
-
-  void decrement() {
-    setState(
-      () {
-        counter--;
-        print(counter);
-      },
-    );
-  }
+  int counter = 0, counter2 = 20;
+  bool flag = false;
 
   void increment() {
     setState(
       () {
-        counter++;
-        print(counter);
+        if(!flag) {
+          counter2--;
+          counter++;
+          print(counter);
+        }
       },
     );
   }
 
-  bool get isEmpty => counter == 0;
+  void switchFlag(){
+    setState(() {
+      resetDonut(counter);
+    },);
+  }
+
+  void resetDonut(int? number){
+    setState(() {
+      if(number != null && number == 0){
+        resetNumbers();
+      }
+    },
+    );
+  }
+
+  void resetNumbers(){
+    setState(() {
+      flag = !flag;
+      print(flag);
+      counter2 = 20;
+      counter = counter;
+      flag = !flag;
+      print(counter);
+      print(flag);
+    },);
+  }
+
+
+
+  bool get isEmpty => counter2 >= 0;
 
   bool get isFull => counter == 20;
+
+  bool get isFlag => flag == false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.greenAccent,
       body: Container(
-        decoration: const BoxDecoration(
-            image: DecorationImage(
-          image: AssetImage("assets/images/summer-ani.gif"),
-          fit: BoxFit.cover,
-        )),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: isFull
+                ? const AssetImage(("assets/images/donutisland.gif"))
+                : const AssetImage("assets/images/donut.gif"),
+            fit: BoxFit.cover,
+          ),
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              isEmpty ? "Vazio!" : isFull ? "Lotado!" : "Pode entrar!",
+            const Text(
+              "Buy a donut!",
               style: TextStyle(
-                fontSize: 40,
-                color: isFull ? Colors.red : Colors.white,
+                  fontSize: 50, color: Colors.white, letterSpacing: 6),
+            ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 30),
+            ),
+            const Text(
+              "Quantity",
+              style: TextStyle(
+                  fontSize: 40, color: Colors.white, letterSpacing: 6),
+            ),
+            Text(
+              "$counter2",
+              style: const TextStyle(fontSize: 30, color: Colors.white),
+            ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+            ),
+            Text(
+              isEmpty
+                  ? "Donuts u have:"
+                  : isFull
+                      ? "U bought them all"
+                      : "U still can buy",
+              style: TextStyle(
+                fontSize: 30,
+                color: !isFlag ? Colors.red : Colors.white,
                 letterSpacing: 6,
                 fontWeight: FontWeight.w600,
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(32),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
               child: Text(
                 "$counter",
                 style: TextStyle(
@@ -82,37 +135,41 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: isEmpty ? null : decrement,
+                  onPressed: isFull && isFlag ? () { resetDonut(counter2);} : null,
                   style: TextButton.styleFrom(
-                      backgroundColor: isEmpty
-                          ? Colors.white.withOpacity(0.2)
-                          : Colors.white,
-                      fixedSize: const Size(120, 50),
-                      primary: Colors.red,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(19)),
-                      padding: const EdgeInsets.only(
-                          left: 32, right: 32, top: 16, bottom: 16)),
+                    backgroundColor:
+                        isFull && isFlag ? Colors.white : Colors.white.withOpacity(0.2),
+                    fixedSize: const Size(150, 50),
+                    primary: Colors.red,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(19),
+                    ),
+                    padding: const EdgeInsets.only(
+                        left: 32, right: 32, top: 16, bottom: 16),
+                  ),
                   child: const Text(
-                    "Saiu",
+                    "Buy more",
                     style: TextStyle(
                         letterSpacing: 2, fontSize: 13.5, color: Colors.black),
                   ),
                 ),
                 const SizedBox(width: 50),
                 TextButton(
-                  onPressed: isFull ? null : increment,
+                  // TODO Fix the isFlag problem
+                  onPressed: isFlag && isEmpty ? increment : null,
                   style: TextButton.styleFrom(
-                      backgroundColor:
-                          isFull ? Colors.white.withOpacity(0.2) : Colors.white,
-                      fixedSize: const Size(120, 50),
-                      primary: Colors.green,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(19)),
-                      padding: const EdgeInsets.only(
-                          left: 32, right: 32, top: 16, bottom: 16)),
+                    backgroundColor:
+                        !isFull && isFlag && isEmpty ? Colors.white : Colors.white.withOpacity(0.2),
+                    fixedSize: const Size(120, 50),
+                    primary: Colors.green,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(19),
+                    ),
+                    padding: const EdgeInsets.only(
+                        left: 32, right: 32, top: 16, bottom: 16),
+                  ),
                   child: const Text(
-                    "Entrou",
+                    "Buy",
                     style: TextStyle(
                       letterSpacing: 2,
                       fontSize: 13.5,
