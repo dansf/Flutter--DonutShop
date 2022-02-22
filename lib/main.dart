@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -30,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   void increment() {
     setState(
       () {
-        if(!flag) {
+        if (!flag) {
           counter2--;
           counter++;
           print(counter);
@@ -39,38 +41,46 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void switchFlag(){
-    setState(() {
-      resetDonut(counter);
-    },);
-  }
-
-  void resetDonut(int? number){
-    setState(() {
-      if(number != null && number == 0){
-        resetNumbers();
-      }
-    },
+  void switchFlag() {
+    setState(
+      () {
+        resetDonut(counter);
+      },
     );
   }
 
-  void resetNumbers(){
-    setState(() {
-      flag = !flag;
-      print(flag);
-      counter2 = 20;
-      counter = counter;
-      flag = !flag;
-      print(counter);
-      print(flag);
-    },);
+  void resetDonut(int? number) {
+    setState(
+      () {
+        if (number != null && number == 0) {
+          resetNumbers();
+        }
+      },
+    );
   }
 
+  void resetNumbers() {
+    setState(
+      () {
+        flag = !flag;
+        print(flag);
+        counter2 = 20;
+        counter = counter;
+        Future.delayed(
+          const Duration(seconds: 3),
+              () {
+            setState(() {
+              flag = !flag;
+              print(counter);
+              print(flag);
+            });
+          },
+        );
+      },
+    );
+  }
 
-
-  bool get isEmpty => counter2 >= 0;
-
-  bool get isFull => counter == 20;
+  bool get isEmpty => counter2 == 0;
 
   bool get isFlag => flag == false;
 
@@ -81,9 +91,9 @@ class _HomePageState extends State<HomePage> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: isFull
-                ? const AssetImage(("assets/images/donutisland.gif"))
-                : const AssetImage("assets/images/donut.gif"),
+            image: isFlag && !isEmpty
+                ? const AssetImage("assets/images/donut.gif")
+                : const AssetImage("assets/images/donutisland.gif"),
             fit: BoxFit.cover,
           ),
         ),
@@ -91,7 +101,7 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text(
-              "Buy a donut!",
+              "Buy a Donut!",
               style: TextStyle(
                   fontSize: 50, color: Colors.white, letterSpacing: 6),
             ),
@@ -111,14 +121,14 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
             ),
             Text(
-              isEmpty
+              !isEmpty
                   ? "Donuts u have:"
-                  : isFull
-                      ? "U bought them all"
+                  : !isFlag
+                      ? ""
                       : "U still can buy",
               style: TextStyle(
                 fontSize: 30,
-                color: !isFlag ? Colors.red : Colors.white,
+                color: isFlag && !isEmpty ? Colors.white : Colors.redAccent,
                 letterSpacing: 6,
                 fontWeight: FontWeight.w600,
               ),
@@ -128,17 +138,22 @@ class _HomePageState extends State<HomePage> {
               child: Text(
                 "$counter",
                 style: TextStyle(
-                    fontSize: 55, color: isFull ? Colors.red : Colors.white),
+                    fontSize: 55, color: isFlag && !isEmpty ? Colors.white : Colors.redAccent),
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 TextButton(
-                  onPressed: isFull && isFlag ? () { resetDonut(counter2);} : null,
+                  onPressed: isFlag && isEmpty
+                      ? () {
+                          resetDonut(counter2);
+                        }
+                      : null,
                   style: TextButton.styleFrom(
-                    backgroundColor:
-                        isFull && isFlag ? Colors.white : Colors.white.withOpacity(0.2),
+                    backgroundColor: isFlag && isEmpty
+                        ? Colors.white
+                        : Colors.white.withOpacity(0.2),
                     fixedSize: const Size(150, 50),
                     primary: Colors.red,
                     shape: RoundedRectangleBorder(
@@ -156,10 +171,11 @@ class _HomePageState extends State<HomePage> {
                 const SizedBox(width: 50),
                 TextButton(
                   // TODO Fix the isFlag problem
-                  onPressed: isFlag && isEmpty ? increment : null,
+                  onPressed: isFlag && !isEmpty ? increment : null,
                   style: TextButton.styleFrom(
-                    backgroundColor:
-                        !isFull && isFlag && isEmpty ? Colors.white : Colors.white.withOpacity(0.2),
+                    backgroundColor: isFlag && !isEmpty
+                        ? Colors.white
+                        : Colors.white.withOpacity(0.2),
                     fixedSize: const Size(120, 50),
                     primary: Colors.green,
                     shape: RoundedRectangleBorder(

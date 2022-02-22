@@ -4,7 +4,7 @@
 Flutter app of a Donut shop.
 
 #### Download
-On going!
+<a href="https://www.mediafire.com/file/d076bed1gi9cxhd/DonutShop.apk/file" target="_blank">Download here!</a>
 
 #### Words from the manager
 *"Buy a donut. Add sweetness in life, it wont make you healthy but tastes goooooood! 👌" ~ The Manager*
